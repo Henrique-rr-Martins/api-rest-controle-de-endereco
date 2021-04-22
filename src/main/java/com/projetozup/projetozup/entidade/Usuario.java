@@ -25,7 +25,7 @@ public class Usuario {
 	@SequenceGenerator(name = "SEQ_ID_USUARIO", schema = "ZUP", sequenceName = "SEQ_ID_USUARIO", allocationSize = 1)
 	@GeneratedValue(generator = "SEQ_ID_USUARIO", strategy = GenerationType.IDENTITY)
 	@Column(name = "id_usuario")
-	private long idUsuario;
+	private Long idUsuario;
 	
 	@Column(name="cpf")
 	private String cpf;
@@ -35,4 +35,22 @@ public class Usuario {
 	private String email;
 	@Column(name="dt_nasc")
 	private LocalDate dtNasc;
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj)
+			return true;
+		if(obj == null || this.getClass() != obj.getClass())
+			return false;
+		
+		Usuario usu = (Usuario)obj;
+		
+		if(usu != null && this.cpf != null && usu.getCpf() != null) {
+			return this.getCpf().equals(usu.getCpf());			
+		}
+			
+		
+		return this.getIdUsuario() == usu.getIdUsuario();
+	}
+	
 }
