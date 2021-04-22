@@ -14,5 +14,5 @@ import lombok.NoArgsConstructor;
 public class UsuarioObjRetorno {
 	private int cdRetorno;
 	private String msgRetorno;
-	private Usuario listaUsuario;
+	private Usuario Usuario;
 }
