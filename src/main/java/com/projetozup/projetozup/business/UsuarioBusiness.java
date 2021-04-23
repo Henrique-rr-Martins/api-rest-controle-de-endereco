@@ -1,65 +1,107 @@
 package com.projetozup.projetozup.business;
 
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.validation.ConstraintViolationException;
+
+import org.hibernate.exception.GenericJDBCException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 
 import com.projetozup.projetozup.entidade.Usuario;
 import com.projetozup.projetozup.repository.UsuarioRepository;
-import com.projetozup.projetozup.util.UsuarioListaRetorno;
-import com.projetozup.projetozup.util.UsuarioObjRetorno;
 
 @Service
 public class UsuarioBusiness {
-	
+
 	@Autowired
 	private UsuarioRepository repositorio;
-	
-	public UsuarioListaRetorno buscarTodos() {
-		UsuarioListaRetorno retorno = new UsuarioListaRetorno();
-		retorno.setCdRetorno(204);
-		
-//		try {
-//			retorno.setListaUsuario(this.repositorio.findAll());
-//			retorno.setCdRetorno(200);
-//			retorno.setMsgRetorno("Sucesso.");
-//			
-//		} catch (NullPointerException e) {
-//			retorno.setListaUsuario(null);
-//			retorno.setMsgRetorno("Dados inexistentes.");
-//		}catch(Exception e) {
-//			retorno.setListaUsuario(null);
-//			retorno.setMsgRetorno("Houve algum erro durante a requisição.");
-//		}
-		
-		retorno.setListaUsuario(this.repositorio.findAll());
-		
-		return retorno;
-		
+
+	public ResponseEntity<?> buscarTodos() {
+		try {
+			Collection<Usuario> lista = this.repositorio.findAll();
+			return new ResponseEntity<Collection<Usuario>>(lista, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("Erro desconhecido. Entrar em contato com o administrador",
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
-	
-	public UsuarioObjRetorno salvar(Usuario usuario) {
-		UsuarioObjRetorno retorno = new UsuarioObjRetorno();
-		
-		retorno = null;
-		this.repositorio.save(usuario);
-//		retorno.setCdRetorno(400);
-//		retorno.setUsuario(usuario);
-//		
-//		this.repositorio.save(usuario);
-//		if(usuario != null && usuario.getCpf() != null && usuario.getCpf().trim().length() >= 11 && usuario.getEmail() != null && usuario.getEmail().trim().length() > 0) {
-//			try {
-//				retorno.setUsuario(this.repositorio.save(usuario));
-//				retorno.setCdRetorno(201);
-//				retorno.setMsgRetorno("Sucesso.");
-//			} catch(NullPointerException e){
-//				retorno.setMsgRetorno("Usuário de cpf " + usuario.getCpf() + " não  foi salvo.");
-//			} catch (Exception e) {
-//				retorno.setMsgRetorno("Processo não pôde ser finalizado.");
-//			}
-//		}else {
-//			retorno.setMsgRetorno("Por favor preencha cpf e email.");
-//		}
-		
-		return retorno;
+
+	public ResponseEntity<?> buscarPorId(Long idUsuario) {
+		try {
+
+			Optional<Usuario> usu = this.repositorio.findById(idUsuario);
+
+			if (usu.orElseGet(() -> null) != null) {
+				return new ResponseEntity<Usuario>(usu.get(), HttpStatus.OK);
+			} else {
+				return new ResponseEntity<String>("Não existem dados para  esse usuário.", HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("Erro desconhecido. Entrar em contato com o administrador",
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	public ResponseEntity<?> salvar(Usuario usuario) {
+		try {
+			return new ResponseEntity<Usuario>(this.repositorio.save(usuario), HttpStatus.CREATED);
+		} catch (DataIntegrityViolationException | ConstraintViolationException  e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("Integridade violada. Email ou cpf já cadastrados.",
+					HttpStatus.BAD_REQUEST);
+		} catch (JpaSystemException | GenericJDBCException | HttpMessageNotReadableException e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("Erro no preenchimento dos dados. Favor preencher corretamente.",
+					HttpStatus.BAD_REQUEST);
+		}catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("Erro desconhecido. Entrar em contato com o administrador",
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public ResponseEntity<?> atualizar(Long idUsuario, Usuario usuario) {
+		try {
+
+			return repositorio.findById(idUsuario).map(record -> {
+				record.setCpf(usuario.getCpf());
+				record.setNmUsuario(usuario.getNmUsuario());
+				record.setEmail(usuario.getEmail());
+				record.setDtNasc(usuario.getDtNasc());
+
+				Usuario update = repositorio.save(record);
+
+				return new ResponseEntity(update, HttpStatus.CREATED);
+			}).orElse(new ResponseEntity<String>("Usuário não encontrado.", HttpStatus.BAD_REQUEST));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("Erro desconhecido. Entrar em contato com o administrador",
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	public ResponseEntity<?> deletar(Long idUsuario) {
+		try {
+			repositorio.deleteById(idUsuario);
+			return new ResponseEntity<String>("Usuário de id " + idUsuario + " deletado.", HttpStatus.OK);
+		} catch (EmptyResultDataAccessException e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("Usuário não encontrado.", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("Erro desconhecido. Entrar em contato com o administrador",
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
