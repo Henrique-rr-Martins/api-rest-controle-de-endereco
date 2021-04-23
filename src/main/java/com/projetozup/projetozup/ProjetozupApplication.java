@@ -1,5 +1,7 @@
 package com.projetozup.projetozup;
 
+import java.util.Locale;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -9,10 +11,10 @@ import com.projetozup.projetozup.util.JpaUtil;
 public class ProjetozupApplication {
 
 	public static void main(String[] args) {
+		Locale.setDefault(new Locale("pt", "BR"));
 		SpringApplication.run(ProjetozupApplication.class, args);
 		
-		
-		System.out.println(JpaUtil.getEntityManager().isOpen());
+		JpaUtil.testaConexao();
 	}
 
 }

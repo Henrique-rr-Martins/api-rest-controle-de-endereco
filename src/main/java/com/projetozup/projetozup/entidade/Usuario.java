@@ -10,13 +10,17 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity(name = "Usuario")
 @Table(name = "Usuario")
 public class Usuario {
@@ -34,6 +38,7 @@ public class Usuario {
 	@Column(name="email")
 	private String email;
 	@Column(name="dt_nasc")
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dtNasc;
 	
 	@Override
