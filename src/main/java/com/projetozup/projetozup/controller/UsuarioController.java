@@ -36,8 +36,8 @@ public class UsuarioController {
 		return business.salvar(usuario);
 	}
 	
-	@PutMapping
-	public ResponseEntity<?> atualizar(@PathVariable Long idUsuario, @RequestBody Usuario usuario){
+	@PutMapping(value = "{id}")
+	public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long idUsuario, @RequestBody Usuario usuario){
 		return business.atualizar(idUsuario, usuario);
 	}
 	

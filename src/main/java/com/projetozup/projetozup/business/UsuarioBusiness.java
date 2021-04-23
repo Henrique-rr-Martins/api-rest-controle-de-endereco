@@ -3,8 +3,7 @@ package com.projetozup.projetozup.business;
 import java.util.Collection;
 import java.util.Optional;
 
-import javax.validation.ConstraintViolationException;
-
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.GenericJDBCException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
