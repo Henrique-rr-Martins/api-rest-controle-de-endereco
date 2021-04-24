@@ -7,7 +7,7 @@
 	<persistence-unit name="ZUP">
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 		
-		<class>com.projetozup.projetozup.entidade.Usuario</class>
+<!-- 		<class>entidades.Conta</class> -->
 <!-- 		<class>entidades.Endereco</class> -->
 <!-- 		<class>entidades.Pessoa</class> -->
 		
