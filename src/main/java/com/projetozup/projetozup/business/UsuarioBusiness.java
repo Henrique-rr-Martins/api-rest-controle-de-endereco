@@ -54,13 +54,10 @@ public class UsuarioBusiness {
 	public ResponseEntity<?> salvar(Usuario usuario) {
 		try {
 			return new ResponseEntity<Usuario>(this.repositorio.save(usuario), HttpStatus.CREATED);
-		} catch (DataIntegrityViolationException | ConstraintViolationException  e) {
+		} catch (JpaSystemException | GenericJDBCException | HttpMessageNotReadableException | 
+				DataIntegrityViolationException | ConstraintViolationException e) {
 			e.printStackTrace();
-			return new ResponseEntity<String>("Integridade violada. Email ou cpf já cadastrados.",
-					HttpStatus.BAD_REQUEST);
-		} catch (JpaSystemException | GenericJDBCException | HttpMessageNotReadableException e) {
-			e.printStackTrace();
-			return new ResponseEntity<String>("Erro no preenchimento dos dados. Favor preencher corretamente.",
+			return new ResponseEntity<String>("Erro no preenchimento dos dados. Favor preencher corretamente e verificar se email ou cpf já estão cadastrados.",
 					HttpStatus.BAD_REQUEST);
 		}catch (Exception e) {
 			e.printStackTrace();
