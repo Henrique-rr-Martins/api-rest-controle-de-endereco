@@ -3,9 +3,9 @@
 create table ZUP.USUARIO(
     id_usuario number not null,
     cpf varchar2(14) not null,
-    nm_usuario varchar2(100) null,
+    nm_usuario varchar2(100) not null,
     email varchar2(150) not null,
-    dt_nasc date null,
+    dt_nasc date not null,
     constraint pk_id_usuario primary key (id_usuario),
     constraint uk_cpf_usuario unique(cpf),
     constraint uk_email unique(email)
@@ -24,12 +24,12 @@ create table ZUP.ENDERECO(
     id_endereco number not null,
     id_usuario number not null,
     cep varchar2(9) not null,
-    logradouro varchar2(300) null,
-    numero number null,
-    complemento varchar2(100) null,
-    bairro varchar2(100) null,
-    cidade varchar2(100) null,
-    uf varchar2(2) null,
+    logradouro varchar2(300) not null,
+    numero number not null,
+    complemento varchar2(100) not null,
+    bairro varchar2(100) not null,
+    cidade varchar2(100) not null,
+    uf varchar2(2) not null,
     constraint pk_id_endereco primary key(id_endereco),
     constraint fk_endereco_usuario foreign key(id_usuario) references usuario(id_usuario)
 );
